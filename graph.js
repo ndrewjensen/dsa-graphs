@@ -51,15 +51,17 @@ class Graph {
    */
 
   removeVertex(vertex) {
-    this.nodes.delete(vertex);
-    for (let a of vertex.adjacent) {
-      a.adjacent.delete(vertex);
+    //FIXME: this only handles bi-directional, the solution handles one-directional
+    for (let n of this.nodes) {
+      n.adjacent.delete(vertex);
     }
+    this.nodes.delete(vertex);
   }
 
   /** traverse graph with DFS and returns array of Node values */
 
   depthFirstSearch(start) {
+    //FIXME:Solutions used a nice pure recursion, or a helper recursion
     let toVisitStack = [start];
     let output = [];
     let seen = new Set(toVisitStack);
@@ -81,6 +83,7 @@ class Graph {
 
   /** traverse graph with BDS and returns array of Node values */
   breadthFirstSearch(start) {
+    //FIXME: alternatively, import the queue class to do it O(n)
     let toVisitStack = [start];
     let output = [];
     let seen = new Set(toVisitStack);
@@ -98,66 +101,37 @@ class Graph {
       }
     }
     return output;
-
   }
 
-  /** find the distance of the shortest path from the start vertex to the end vertex */
-  // distanceOfShortestPath(start, end, toVisitStack = [start],
-  //   seen = new Set([start]), minDistance = Infinity, distance = 0) {
+  /** find the distance of the shortest path
+   * from the start vertex to the end vertex */
 
-  //   // if (start === end) return 0;
-
-  //   if (start === end) {
-  //     if (distance < minDistance) minDistance = distance;
-  //     return minDistance;
-  //   }
-
-  //   while (toVisitStack.length) {
-  //     for (let neighbor of start.adjacent) {
-  //       if (!seen.has(neighbor)) {
-  //         toVisitStack.push(neighbor);
-  //         seen.add(neighbor);
-  //       }
-  //     }
-  //     distance++;
-  //     minDistance = this.distanceOfShortestPath(toVisitStack.pop(),
-  //       end,
-  //       toVisitStack,
-  //       seen,
-  //       minDistance,
-  //       distance);
-  //   }
-  //   distance--;
-  //   return minDistance;
-  // }
-
-  distanceOfShortestPath(start, end) {
-
-    let toVisitStack = [false, start];
-    let seen = new Set(toVisitStack);
-    let distance = 0;
-
-    while (toVisitStack.length) {
-      let currVertex = toVisitStack.shift();
-
-      if (start === end) return distance;
-
-      if (currVertex === false) {
-        distance++;
-      } else if (currVertex === end) {
-        return distance;
-      } else {
-        for (let neighbor of currVertex.adjacent) {
-          if (!seen.has(neighbor)) {
-            toVisitStack.push(neighbor);
-            seen.add(neighbor);
-          }
+  //FIXME: alternatively, import the queue class to do it O(n)
+  distanceOfShortestPath(
+    start,
+    end,
+    toVisit = [start],
+    seen = new Set([start]),
+    distance = 0
+  ) {
+    if (start === end) return 0;
+    distance++;
+    let nextGen = [];
+    for (let v of toVisit) {
+      for (let n of v.adjacent) {
+        if (n === end) return distance;
+        if (!seen.has(n)) {
+          nextGen.push(n);
+          seen.add(n);
         }
       }
-      toVisitStack.push(false);
     }
+    if (nextGen.length) {
+      return this.distanceOfShortestPath(start, end, nextGen, seen, distance);
+    }
+
+    return;
   }
 }
-
 
 module.exports = { Graph, Node };
