@@ -1,3 +1,5 @@
+"use strict";
+
 /** Node class for graph. */
 
 class Node {
@@ -100,33 +102,60 @@ class Graph {
   }
 
   /** find the distance of the shortest path from the start vertex to the end vertex */
-  distanceOfShortestPath(start, end, toVisitStack = [start],
-    seen = new Set([start]), minDistance = Infinity, distance = 0) {
+  // distanceOfShortestPath(start, end, toVisitStack = [start],
+  //   seen = new Set([start]), minDistance = Infinity, distance = 0) {
 
-    // if (start === end) return 0;
+  //   // if (start === end) return 0;
 
-    if (start === end) {
-      if (distance < minDistance) minDistance = distance;
-      return minDistance;
-    }
+  //   if (start === end) {
+  //     if (distance < minDistance) minDistance = distance;
+  //     return minDistance;
+  //   }
+
+  //   while (toVisitStack.length) {
+  //     for (let neighbor of start.adjacent) {
+  //       if (!seen.has(neighbor)) {
+  //         toVisitStack.push(neighbor);
+  //         seen.add(neighbor);
+  //       }
+  //     }
+  //     distance++;
+  //     minDistance = this.distanceOfShortestPath(toVisitStack.pop(),
+  //       end,
+  //       toVisitStack,
+  //       seen,
+  //       minDistance,
+  //       distance);
+  //   }
+  //   distance--;
+  //   return minDistance;
+  // }
+
+  distanceOfShortestPath(start, end) {
+
+    let toVisitStack = [false, start];
+    let seen = new Set(toVisitStack);
+    let distance = 0;
 
     while (toVisitStack.length) {
-      for (let neighbor of start.adjacent) {
-        if (!seen.has(neighbor)) {
-          toVisitStack.push(neighbor);
-          seen.add(neighbor);
+      let currVertex = toVisitStack.shift();
+
+      if (start === end) return distance;
+
+      if (currVertex === false) {
+        distance++;
+      } else if (currVertex === end) {
+        return distance;
+      } else {
+        for (let neighbor of currVertex.adjacent) {
+          if (!seen.has(neighbor)) {
+            toVisitStack.push(neighbor);
+            seen.add(neighbor);
+          }
         }
       }
-      distance++;
-      minDistance = this.distanceOfShortestPath(toVisitStack.pop(),
-        end,
-        toVisitStack,
-        seen,
-        minDistance,
-        distance);
+      toVisitStack.push(false);
     }
-    distance--;
-    return minDistance;
   }
 }
 
