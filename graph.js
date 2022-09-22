@@ -78,10 +78,57 @@ class Graph {
   }
 
   /** traverse graph with BDS and returns array of Node values */
-  breadthFirstSearch(start) {}
+  breadthFirstSearch(start) {
+    let toVisitStack = [start];
+    let output = [];
+    let seen = new Set(toVisitStack);
+
+    while (toVisitStack.length) {
+      let currVertex = toVisitStack.shift();
+
+      output.push(currVertex.value);
+
+      for (let neighbor of currVertex.adjacent) {
+        if (!seen.has(neighbor)) {
+          toVisitStack.push(neighbor);
+          seen.add(neighbor);
+        }
+      }
+    }
+    return output;
+
+  }
 
   /** find the distance of the shortest path from the start vertex to the end vertex */
-  distanceOfShortestPath(start, end) {}
+  distanceOfShortestPath(start, end, toVisitStack = [start],
+    seen = new Set([start]), minDistance = Infinity, distance = 0) {
+
+    // if (start === end) return 0;
+
+    if (start === end) {
+      if (distance < minDistance) minDistance = distance;
+      return minDistance;
+    }
+
+    while (toVisitStack.length) {
+      for (let neighbor of start.adjacent) {
+        if (!seen.has(neighbor)) {
+          toVisitStack.push(neighbor);
+          seen.add(neighbor);
+        }
+      }
+      distance++;
+      minDistance = this.distanceOfShortestPath(toVisitStack.pop(),
+        end,
+        toVisitStack,
+        seen,
+        minDistance,
+        distance);
+    }
+    distance--;
+    return minDistance;
+  }
 }
+
 
 module.exports = { Graph, Node };
